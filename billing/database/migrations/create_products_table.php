@@ -11,6 +11,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string('stripe_id')->nullable();
             $table->string('name');
             $table->text('description')->nullable();
             $table->unsignedInteger('cpu')->default(0);

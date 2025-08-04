@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Stripe\StripeClient;
 
 /**
  * @property int $id
+ * @property ?string $stripe_id
  * @property string $name
  * @property ?string $description
  * @property int $cpu
@@ -28,6 +30,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Product extends Model
 {
     protected $fillable = [
+        'stripe_id',
         'name',
         'description',
         'egg_id',
@@ -63,5 +66,31 @@ class Product extends Model
     public function egg(): BelongsTo
     {
         return $this->BelongsTo(Egg::class, 'egg_id');
+    }
+
+    public function sync(): void
+    {
+        /** @var StripeClient $stripeClient */
+        $stripeClient = app(StripeClient::class);
+
+        if (is_null($this->stripe_id)) {
+            $stripeProduct = $stripeClient->products->create([
+                'name' => $this->name,
+                'description' => $this->description,
+            ]);
+
+            $this->update([
+                'stripe_id' => $stripeProduct->id,
+            ]);
+        } else {
+            $stripeClient->products->update($this->stripe_id, [
+                'name' => $this->name,
+                'description' => $this->description,
+            ]);
+        }
+
+        foreach ($this->prices as $price) {
+            $price->sync();
+        }
     }
 }

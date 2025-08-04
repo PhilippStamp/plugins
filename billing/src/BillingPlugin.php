@@ -2,7 +2,6 @@
 
 namespace Boy132\Billing;
 
-use App\Models\Role;
 use App\Traits\EnvironmentWriterTrait;
 use Filament\Contracts\Plugin;
 use Filament\Forms\Components\Select;
@@ -24,9 +23,6 @@ class BillingPlugin implements Plugin
         $id = str($panel->getId())->title();
 
         $panel->discoverResources(plugin_path($this->getId(), "src/Filament/$id/Resources"), "Boy132\\Billing\\Filament\\$id\\Resources");
-
-        Role::registerCustomDefaultPermissions('customer');
-        Role::registerCustomDefaultPermissions('product');
     }
 
     public function boot(Panel $panel): void {}

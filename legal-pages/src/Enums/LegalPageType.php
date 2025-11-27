@@ -3,34 +3,35 @@
 namespace Boy132\LegalPages\Enums;
 
 use Boy132\LegalPages\Filament\App\Pages\Imprint;
+use Boy132\LegalPages\Filament\App\Pages\PrivacyPolicy;
 use Boy132\LegalPages\Filament\App\Pages\TermsOfService;
-use Exception;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Support\Str;
 
 enum LegalPageType: string implements HasLabel
 {
-    case Imprint = 'imprint';
-    case TermsOfService = 'terms_of_service';
+    case Imprint = Imprint::class;
+    case TermsOfService = TermsOfService::class;
+    case PrivacyPolicy = PrivacyPolicy::class;
 
-    /** @return class-string */
-    public function getClass(): string
+    public function getId(): string
     {
-        return match ($this->value) {
-            'imprint' => Imprint::class,
-            'terms_of_service' => TermsOfService::class,
-            default => throw new Exception('Unknown legal page type'),
-        };
+        return Str::snake($this->name);
     }
 
     public function getLabel(): string
     {
-        return trans('legal-pages::strings.' . $this->value);
+        return trans('legal-pages::strings.' . $this->getId());
     }
 
     public function getUrl(): string
     {
-        $name = str_replace('_', '', $this->value);
+        return '/' . Str::slug($this->name);
+    }
 
-        return "/$name";
+    /** @return class-string */
+    public function getClass(): string
+    {
+        return $this->value;
     }
 }

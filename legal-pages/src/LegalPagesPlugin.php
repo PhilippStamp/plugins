@@ -25,7 +25,7 @@ class LegalPagesPlugin implements Plugin
 
     public static function Save(LegalPageType $type, ?string $contents): bool
     {
-        $path = $type->value . '.md';
+        $path = $type->getId() . '.md';
 
         if (!$contents) {
             return Storage::delete($path);
@@ -36,6 +36,6 @@ class LegalPagesPlugin implements Plugin
 
     public static function Load(LegalPageType $type): ?string
     {
-        return Storage::get($type->value . '.md');
+        return Storage::get($type->getId() . '.md');
     }
 }

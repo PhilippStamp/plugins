@@ -2,6 +2,7 @@
 
 namespace Boy132\LegalPages\Providers;
 
+use App\Enums\CustomRenderHooks;
 use Boy132\LegalPages\Enums\LegalPageType;
 use Boy132\LegalPages\LegalPagesPlugin;
 use Filament\Support\Facades\FilamentView;
@@ -15,7 +16,7 @@ class LegalPagesPluginProvider extends RouteServiceProvider
     {
         $this->routes(function () {
             foreach (LegalPageType::cases() as $legalPageType) {
-                Route::get($legalPageType->value, $legalPageType->getClass())->name($legalPageType->value)->withoutMiddleware(['auth']);
+                Route::get($legalPageType->getId(), $legalPageType->getClass())->name($legalPageType->getId())->withoutMiddleware(['auth']);
             }
         });
 
@@ -37,7 +38,7 @@ class LegalPagesPluginProvider extends RouteServiceProvider
         }
 
         if ($footer) {
-            FilamentView::registerRenderHook('pelican::footer-end', fn () => Blade::render("<div>$footer</div>"));
+            FilamentView::registerRenderHook(CustomRenderHooks::FooterEnd->value, fn () => Blade::render("<div>$footer</div>"));
         }
     }
 }

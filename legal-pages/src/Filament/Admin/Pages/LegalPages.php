@@ -56,7 +56,7 @@ class LegalPages extends Page
         $data = [];
 
         foreach (LegalPageType::cases() as $legalPageType) {
-            $data[$legalPageType->value] = LegalPagesPlugin::Load($legalPageType);
+            $data[$legalPageType->getId()] = LegalPagesPlugin::Load($legalPageType);
         }
 
         $this->form->fill($data);
@@ -72,19 +72,19 @@ class LegalPages extends Page
         $schema = [];
 
         foreach (LegalPageType::cases() as $legalPageType) {
-            $schema[] = MarkdownEditor::make($legalPageType->value)
+            $schema[] = MarkdownEditor::make($legalPageType->getId())
                 ->label($legalPageType->getLabel())
                 ->hintActions([
                     Action::make('view')
                         ->label(trans('filament-actions::view.single.label'))
                         ->icon('tabler-eye')
                         ->url($legalPageType->getUrl(), true)
-                        ->visible(fn (Get $get) => $get($legalPageType->value)),
+                        ->visible(fn (Get $get) => $get($legalPageType->getId())),
                     Action::make('clear')
                         ->label(trans('legal-pages::strings.clear'))
                         ->color('danger')
                         ->icon('tabler-trash')
-                        ->action(fn (Set $set) => $set($legalPageType->value, null)),
+                        ->action(fn (Set $set) => $set($legalPageType->getId(), null)),
                 ]);
         }
 
